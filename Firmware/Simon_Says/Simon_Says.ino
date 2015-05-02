@@ -47,6 +47,8 @@
 // Define game parameters
 #define ROUNDS_TO_WIN      13 //Number of rounds to succesfully remember before you win. 13 is do-able.
 #define ENTRY_TIME_LIMIT   3000 //Amount of time to press a button before game times out. 3000ms = 3 sec
+#define INITIAL_PLAYBACK   150 //Initial time between tones.
+#define FASTEST_PLAYBACK   75 //Fastest time between tones.
 
 #define MODE_MEMORY  0
 #define MODE_BATTLE  1
@@ -56,6 +58,7 @@
 byte gameMode = MODE_MEMORY; //By default, let's play the memory game
 byte gameBoard[32]; //Contains the combination of buttons as we advance
 byte gameRound = 0; //Counts the number of succesful rounds the player has made it through
+int playbackTime = INITIAL_PLAYBACK; //Time between tones.  Accelerates move by move.
 
 void setup()
 {
@@ -137,6 +140,7 @@ boolean play_memory(void)
   randomSeed(millis()); // Seed the random generator with random amount of millis()
 
   gameRound = 0; // Reset the game to the beginning
+  playbackTime = INITIAL_PLAYBACK;
 
   while (gameRound < ROUNDS_TO_WIN) 
   {
@@ -198,7 +202,8 @@ void playMoves(void)
 
     // Wait some amount of time between button playback
     // Shorten this to make game harder
-    delay(150); // 150 works well. 75 gets fast.
+    delay(playbackTime);
+    playbackTime = playbackTime < FASTEST_PLAYBACK ? FASTEST_PLAYBACK : playbackTime - 8;
   }
 }
 
